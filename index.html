@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TDI: Termostato Doméstico Inteligente con Arduino</title>
+    <style>
+        /* Estilos Generales */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        .container {
+            width: 85%;
+            max-width: 1000px;
+            margin: auto;
+            overflow: hidden;
+        }
+
+        h1, h2 {
+            color: #3f51b5; /* Azul primario */
+        }
+
+        /* Sección HERO (Cabecera) */
+        .hero {
+            background: #3f51b5;
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            margin-bottom: 5px;
+            font-size: 2.5em;
+            color: white;
+        }
+
+        .btn {
+            display: inline-block;
+            background: #ff9800; /* Naranja de acento */
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        /* Secciones de Contenido */
+        .section {
+            padding: 40px 0;
+            border-bottom: #ccc 1px solid;
+        }
+
+        /* Cajas de Características */
+        .feature-box {
+            background: white;
+            padding: 20px;
+            margin-top: 15px;
+            border-left: 4px solid #3f51b5;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Lista de Componentes */
+        .component-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .component-item {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .component-item h3 {
+            color: #1e88e5;
+            font-size: 1.2em;
+        }
+        
+        /* Estilos para la imagen del diagrama */
+        .diagram-section {
+            text-align: center;
+            padding: 40px 0;
+            background-color: #ffffff; /* Fondo blanco para resaltar el diagrama */
+            border-bottom: #ccc 1px solid;
+        }
+
+        .diagram-section img {
+            max-width: 90%; /* Asegura que la imagen sea grande pero no se desborde */
+            height: auto;
+            border: 2px solid #3f51b5; /* Borde para enmarcar la imagen */
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra para dar profundidad */
+        }
+
+        /* Estilos para los iconos de los componentes */
+        .component-item img {
+            width: 70px; /* Tamaño del icono AUMENTADO */
+            height: 70px; /* Tamaño del icono AUMENTADO */
+            margin-bottom: 10px;
+            object-fit: contain;
+        }
+
+        /* Estilos para la Guía de Conexión */
+        .connection-guide ol {
+            list-style: decimal;
+            padding-left: 25px;
+        }
+        .connection-guide li {
+            margin-bottom: 15px;
+            background-color: #ffffff;
+            padding: 10px;
+            border-left: 5px solid #ff9800;
+            border-radius: 4px;
+        }
+        
+        figcaption {
+            font-style: italic;
+            color: #666;
+            margin-top: 10px;
+        }
+
+
+        /* Sección de Código */
+        .code-section {
+            background: #333;
+            color: white;
+            text-align: left;
+        }
+
+        .code-section h2 {
+            color: #ff9800;
+        }
+
+        pre {
+            background: #222;
+            padding: 20px;
+            overflow-x: auto;
+            border-radius: 5px;
+        }
+
+        code.arduino {
+            display: block;
+            font-family: 'Courier New', monospace;
+            color: #00c853; /* Verde para el código */
+            white-space: pre-wrap;
+        }
+
+        /* Pie de Página */
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <div class="container">
+            <h1>Termostato Doméstico Inteligente (TDI)</h1>
+            <p>Control de temperatura eficiente y automático con Arduino Uno.</p>
+            <a href="#detalles" class="btn">Ver Detalles del Proyecto</a>
+        </div>
+    </header>
+
+    <section id="detalles" class="section">
+        <div class="container">
+            <h2>✨ Objetivo y Lógica de Control</h2>
+            <p>El TDI es un controlador diseñado para mantener automáticamente la temperatura de un espacio dentro de un rango de confort fijo, optimizando el uso de energía de sistemas de calefacción y refrigeración.</p>
+            
+            <div class="feature-box">
+                <h3>Rango Fijo de Confort: 18°C a 24°C</h3>
+                <p>El sistema opera con una **Banda Muerta (Dead Band)**. Los actuadores solo se activan cuando la temperatura sale de los límites programados. Esto garantiza que la casa siempre se mantenga en el confort ideal.</p>
+            </div>
+
+            <div class="feature-box">
+                <h3>Ahorro Energético por Histeresis</h3>
+                <p>La lógica de rango evita que los relés se activen y desactiven constantemente (el fenómeno de Histeresis), protegiendo tanto los relés como los electrodomésticos, y reduciendo el consumo eléctrico innecesario.</p>
+            </div>
+        </div>
+    </section>
+
+    
+    <section class="diagram-section">
+        <div class="container">
+            <h2>Diagrama de Conexión en Wokwi</h2>
+            <figure>
+                <img src="diagrama_wokwi.png.jpeg" alt="Diagrama de conexión del termostato en Wokwi.">
+                <figcaption>Vista detallada del circuito del termostato simulado en Wokwi.</figcaption>
+            </figure>
+            <p>Este diagrama muestra la interconexión de todos los componentes: Arduino Uno, Sensor DHT22, Display LCD 16x2 I2C y los Módulos de Relé (simulados con LEDs).</p>
+        </div>
+    </section>
+
+    <section class="section components-section">
+        <div class="container">
+            <h2>⚙️ Componentes Clave del Circuito</h2>
+            
+            <div class="component-list">
+                <div class="component-item">
+                    <img src="icono arduino.png" alt="Icono de Arduino Uno">
+                    <h3>Arduino Uno</h3>
+                    <p>El cerebro. Lee los datos del sensor y ejecuta la lógica de control.</p>
+                </div>
+                <div class="component-item">
+                    <img src="sensor dht22.webp" alt="Icono de Sensor DHT">
+                    <h3>Sensor DHT22</h3>
+                    <p>La entrada. Mide la temperatura y humedad actual para alimentar la lógica.</p>
+                </div>
+                <div class="component-item">
+                    <img src="pantalla lcd i2c.webp" alt="Icono de LCD 16x2 I2C">
+                    <h3>LCD 16x2 I2C</h3>
+                    <p>La interfaz de usuario. Muestra la temperatura, la humedad y el modo (HEAT/COOL/AUTO).</p>
+                </div>
+                <div class="component-item">
+                    <img src="modulo rele.webp" alt="Icono de Módulo de Relé">
+                    <h3>Módulos de Relé (x2)</h3>
+                    <p>Los actuadores. Interruptores que controlan la alta potencia de la Estufa (D5) y el Ventilador (D4).</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section connection-guide">
+        <div class="container">
+            <h2>🛠️ Guía de Conexión Paso a Paso</h2>
+            <p>Sigue estas instrucciones para conectar todos los componentes a tu Arduino Uno:</p>
+            <ol>
+                <li>
+                    <h4>Alimentación General (Power)</h4>
+                    Conecta el pin 5V del Arduino a la línea positiva (+) del protoboard, y el pin GND a la línea negativa (-) del protoboard.
+                </li>
+                <li>
+                    <h4>Sensor DHT22</h4>
+                    Conecta el pin VCC (o +) del sensor a 5V. Conecta GND a GND. Conecta el pin de DATA (datos) del sensor al pin digital D2 del Arduino.
+                </li>
+                <li>
+                    <h4>Display LCD 16x2 I2C</h4>
+                    Conecta el pin VCC del LCD a 5V y el pin GND a GND. Para la comunicación I2C, conecta SDA (Data) del LCD al pin analógico A4 del Arduino, y SCL (Clock) del LCD al pin analógico A5 del Arduino.
+                </li>
+                <li>
+                    <h4>Módulo de Relé 1 (Ventilador/COOL)</h4>
+                    Conecta los pines de alimentación (VCC y GND) del módulo a la fuente de alimentación. Conecta el pin de SEÑAL (IN) del Relé 1 al pin digital D4 del Arduino.
+                </li>
+                <li>
+                    <h4>Módulo de Relé 2 (Estufa/HEAT)</h4>
+                    Conecta los pines de alimentación (VCC y GND) del módulo a la fuente de alimentación. Conecta el pin de SEÑAL (IN) del Relé 2 al pin digital D5 del Arduino.
+                </li>
+            </ol>
+            <p class="feature-box">Nota de Seguridad: En un proyecto real, los relés conectarían dispositivos de alto voltaje (220V). Asegúrate de entender la separación entre la baja tensión del Arduino y la alta tensión de la carga.</p>
+        </div>
+    </section>
+
+    <section class="section code-section">
+        <div class="container">
+            <h2>📄 Código de Programación Completo (Arduino IDE)</h2>
+            <p>Copia y pega este código completo en tu IDE de Arduino o en la simulación de Wokwi.</p>
+            <pre>
+                <code class="arduino">
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include <DHT.h>
+
+// Definiciones de Pines y Componentes
+#define DHTPIN 2        // Pin digital al que está conectado el DHT
+#define DHTTYPE DHT22   // Tipo de sensor
+#define PIN_FAN_RELE 4  // Pin D4 para el Relé del Ventilador (COOL)
+#define PIN_HEATER_RELE 5 // Pin D5 para el Relé de la Estufa (HEAT)
+
+// Rango de Confort (Constantes)
+const float TEMP_MIN = 18.0; 
+const float TEMP_MAX = 24.0;
+
+// Inicialización de Objetos
+LiquidCrystal_I2C lcd(0x27, 16, 2); // Dirección I2C, 16 columnas, 2 filas
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup() {
+    // Configuración de pines de salida para los relés
+    pinMode(PIN_FAN_RELE, OUTPUT);
+    pinMode(PIN_HEATER_RELE, OUTPUT);
+    
+    // Asegurar que los actuadores estén apagados al inicio
+    digitalWrite(PIN_FAN_RELE, LOW);
+    digitalWrite(PIN_HEATER_RELE, LOW);
+
+    // Inicialización de la pantalla LCD
+    lcd.init();
+    lcd.backlight();
+    lcd.print("TDI Control ON");
+    
+    // Inicialización del sensor DHT
+    dht.begin();
+    delay(2000); // Esperar 2 segundos para inicio del sensor
+}
+
+void loop() {
+    // 1. Lectura del Sensor
+    float t = dht.readTemperature(); // Lee temperatura en Celsius
+    float h = dht.readHumidity();    // Lee humedad
+
+    // Manejo de error: Si la lectura falla, salir del loop
+    if (isnan(t) || isnan(h)) {
+        lcd.setCursor(0, 0);
+        lcd.print("Error lectura DHT!");
+        delay(2000);
+        return;
+    }
+
+    // 2. Lógica de Control (Histeresis)
+    
+    // Si la temperatura es demasiado ALTA
+    if (t > TEMP_MAX) {
+        // Enfriar (COOL)
+        digitalWrite(PIN_FAN_RELE, HIGH);   // Ventilador ON
+        digitalWrite(PIN_HEATER_RELE, LOW); // Estufa OFF
+    } 
+    // Si la temperatura es demasiado BAJA
+    else if (t < TEMP_MIN) {
+        // Calentar (HEAT)
+        digitalWrite(PIN_HEATER_RELE, HIGH); // Estufa ON
+        digitalWrite(PIN_FAN_RELE, LOW);    // Ventilador OFF
+    } 
+    // Si está en el rango de confort (Banda Muerta)
+    else {
+        // Modo AHORRO / Auto-mantenimiento
+        digitalWrite(PIN_FAN_RELE, LOW);    // Ventilador OFF
+        digitalWrite(PIN_HEATER_RELE, LOW); // Estufa OFF
+    }
+
+    // 3. Visualización en LCD
+
+    // Mostrar Temperatura y Humedad
+    lcd.setCursor(0, 0);
+    lcd.print("T:");
+    lcd.print(t, 1); // Muestra la temperatura con un decimal
+    lcd.print("C");
+
+    lcd.print(" H:");
+    lcd.print(h, 0); // Muestra la humedad sin decimales
+    lcd.print("%");
+
+    // Mostrar el Estado Operativo (COOL/HEAT/AUTO)
+    lcd.setCursor(0, 1); 
+    lcd.print("Modo: ");
+
+    if (digitalRead(PIN_FAN_RELE) == HIGH) {
+        lcd.print("COOL            ");
+    } else if (digitalRead(PIN_HEATER_RELE) == HIGH) {
+        lcd.print("HEAT            ");
+    } else {
+        lcd.print("AUTO            ");
+    }
+
+    delay(2000); // Pequeña pausa antes de volver a leer
+}
+                </code>
+            </pre>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; [Delfina Denise Sferlazza] - Proyecto de Termostato Doméstico.</p>
+            <p>Final materia Simulacion 3° tecnología ISFD 36.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
